@@ -32,23 +32,38 @@ def remove_duplicate_rows(df):
 
 
 def melt_weekly_scores(df):
-    # Turn each wide row (48 score columns) into several long rows,
-    # one row per trait per week, skipping weeks that haven't happened yet
+    # Turn each wide row into several long rows,
+    # one row per trait per available week
 
-    traits = ["Analytic", "Independent", "Determined", "Professional", "Studious", "Imaginative"]
-    new_rows = []  # we'll build this list up, then turn it into a DataFrame at the end
+    traits = ["Analytic", "Independent", "Determined",
+              "Professional", "Studious", "Imaginative"]
+
+    new_rows = []
+
+    # Find all available weeks from the column names
+    weeks = set()
+
+    for column in df.columns:
+        for trait in traits:
+            if column.startswith(trait + "_W"):
+                week = column.replace(trait + "_W", "")
+                weeks.add(int(week))
 
     for index, row in df.iterrows():
         name = row["name"]
         trainer = row["trainer"]
 
-        for week in range(1, 9):  # weeks 1 to 8
+        for week in sorted(weeks):
             for trait in traits:
-                column_name = trait + "_W" + str(week)  # e.g. "Analytic_W1"
+                column_name = trait + "_W" + str(week)
+
+                if column_name not in df.columns:
+                    continue
+
                 score = row[column_name]
 
                 if pd.isna(score):
-                    continue  # this trainee hasn't reached this week yet, skip it
+                    continue
 
                 new_rows.append({
                     "name": name,
@@ -59,7 +74,6 @@ def melt_weekly_scores(df):
                 })
 
     return pd.DataFrame(new_rows)
-
 
 def validate_score_range(df):
     # Check that every score is between 0 and 8, print a warning if not
