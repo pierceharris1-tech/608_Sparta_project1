@@ -16,8 +16,8 @@ pprint(bucket_contents)
 s3_resources = boto3.resource('s3')
 bucket = s3_resources.Bucket(bucket_name)
 
-talent = pd.read_csv('608_Sparta_project1/src/talent_data.csv')
-academy = pd.read_csv('608_Sparta_project1/src/academy_data.csv')
+talent = pd.read_csv('raw_talent_data.csv')
+academy = pd.read_csv('raw_academy_data.csv)
 
 talent.to_csv('talent.csv', index=False)
 s3_client.upload_file(
