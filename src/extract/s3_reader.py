@@ -55,7 +55,6 @@ def list_files(bucket, prefix):
 
     return all_keys
 
-
 def read_csv_from_s3(bucket, key):
     """Read a single CSV file from S3 and return it as a pandas DataFrame"""
     s3 = get_s3_client()
@@ -142,15 +141,15 @@ def load_all_academy_data(bucket=BUCKET, max_workers=10):
     combined = pd.concat(all_tables, ignore_index=True)
     return combined
 
-
+'''
 def _read_one_talent_file(bucket, key):
     """Download and tag a single Talent file. This is the 'unit of work'
     that we'll run many of at the same time, instead of one after another."""
     record = read_json_from_s3(bucket, key)
     record["talent_id"] = parse_talent_filename(key)
     return record
-
-
+'''
+'''
 def load_all_talent_data(bucket=BUCKET, max_workers=10):
     """Read every Talent JSON file from S3, tag each row with its TalentID
     (from the filename), and combine them all into one big DataFrame.
@@ -171,18 +170,49 @@ def load_all_talent_data(bucket=BUCKET, max_workers=10):
     combined = pd.DataFrame(all_rows)
     return combined
 
+'''
+def load_all_applicant_talent_data(bucket=BUCKET, max_workers=10):
+    """Read every Talent csv file from S3, tag each row with its cohort
+    (from the filename), and combine them all into one big DataFrame.
 
+    Same idea as load_all_academy_data: run several downloads at once
+    instead of one at a time."""
+
+    all_files = list_files(bucket, "Talent/")
+
+    csv_files = [key for key in all_files if key.endswith("Applicants.csv")]
+
+    def read_one(key):
+        df = read_csv_from_s3(bucket, key)
+        df["source_file"] = key.split("/")[-1]
+        return df
+
+    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+        all_tables = list(
+            pool.map(read_one, csv_files)
+        )
+
+    # turn our list of dicts into one DataFrame, one row per person
+    combined = pd.concat(all_tables, ignore_index=True)
+    return combined
+    
+    
 if __name__ == "__main__":
     academy_df = load_all_academy_data()
     print(academy_df.head())
     print(academy_df.shape)
 
-    talent_df = load_all_talent_data()
-    print(talent_df.head())
-    print(talent_df.shape)
+    # talent_df = load_all_talent_data()
+    # print(talent_df.head())
+    # print(talent_df.shape)
+
+    talent_df_csv = load_all_applicant_talent_data()
+    print(talent_df_csv.head())
+    print(talent_df_csv.shape)
 
     # save both raw (but tagged) tables out as CSV files, so we have a
     # local copy to work from without re-downloading from S3 every time
+    talent_df_csv.to_csv("raw_applications_data.csv", index=False)
     academy_df.to_csv("raw_academy_data.csv", index=False)
-    talent_df.to_csv("raw_talent_data.csv", index=False)
+    # talent_df.to_csv("raw_talent_data.csv", index=False)
     print("Saved raw_academy_data.csv and raw_talent_data.csv")
