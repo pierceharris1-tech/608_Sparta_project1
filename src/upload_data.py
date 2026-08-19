@@ -17,7 +17,8 @@ bucket = s3_resources.Bucket(bucket_name)
 
 # talent = pd.read_csv('clean_talent_data.csv')
 # academy = pd.read_csv('raw_academy_data.csv)
-applicants = pd.read_csv('../clean_talent_applications_data.csv')
+# applicants = pd.read_csv('../clean_talent_applications_data.csv')
+sparta_day = pd.read_csv('../cleaned_sparta_day_data.csv')
 
 # talent.to_csv('talent.csv', index=False)
 # s3_client.upload_file(
@@ -33,9 +34,9 @@ applicants = pd.read_csv('../clean_talent_applications_data.csv')
 #     Key='data/academy.csv',
 # )
 
-applicants.to_csv('cleaned_talent_applicants.csv', index=False)
+sparta_day.to_csv('cleaned_sparta_day_assessments.csv', index=False)
 s3_client.upload_file(
-    Filename='cleaned_talent_applicants.csv',
+    Filename='cleaned_sparta_day_assessments.csv',
     Bucket= bucket_name,
-    Key='data/cleaned_talent_applicants.csv',
+    Key='data/cleaned_sparta_day_assessments.csv',
 )
