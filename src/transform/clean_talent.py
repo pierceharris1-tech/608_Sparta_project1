@@ -1,6 +1,28 @@
+'''
+Rules:
+- Leave phone numbers as null
+- Change null univeristy values change to 'N/A'
+- leave pass grades as 'N/A'
+- change grades to 1:1 notation rather than 1st
+- split month into month and year 
+- Standardise naming (Etton/Eton) Fuzzy match?
+- repalce missing values with null 
+
+
+'''
 import pandas as pd
 
 
+
+'''
+DONE:
+1. name standardisation 
+2. remove duplicates
+
+
+'''
+
+# Made the names Joe Bloggs format 
 def standardize_names(df):
     # Clean up candidate names by removing extra spaces
     # and making capitalization consistent
@@ -10,33 +32,55 @@ def standardize_names(df):
 
     return df
 
-def remove_duplicate_rows(df):
-    # Remove rows that are exact duplicates.
-    # Convert list/dictionary values to strings temporarily so
-    # pandas can compare them.
+#Get rid of duplicate rows 
 
-    rows_before = len(df)
+def find_duplicates(df):
+    columns_to_check = [col for col in df.columns if col != "talent_id"]
+    duplicates = df[df.duplicated(subset='name', keep=False)].copy()
+    return duplicates
 
-    df = df.copy()
+#print(find_duplicates(df))
 
-    duplicate_check = df.copy()
+#print(len(find_duplicates(df)))
 
-    for column in duplicate_check.columns:
-        duplicate_check[column] = duplicate_check[column].apply(
-            lambda x: str(x) if isinstance(x, (list, dict)) else x
-        )
+def find_true_duplicate_names(df):
+    """Return a list of names where every column matches except talent_id -
+    i.e. names we're confident are true duplicates, not just people who
+    happen to share a name."""
 
-    duplicate_mask = ~duplicate_check.duplicated()
+    grouped = df.groupby("name")
+    duplicate_names = []
 
-    df = df[duplicate_mask].copy()
+    for name, group in grouped:
+        if len(group) < 2:
+            continue
 
-    rows_after = len(df)
+        rows = group.to_dict("records")
+        first_row = rows[0]
 
-    if rows_before != rows_after:
-        removed = rows_before - rows_after
-        print(f"Removed {removed} duplicate row(s)")
+        for other_row in rows[1:]:
+            differences = []
+
+            for column in df.columns:
+                if column == "talent_id":
+                    continue
+
+                if first_row[column] != other_row[column]:
+                    differences.append(column)
+
+            if not differences:
+                duplicate_names.append(name)
+
+    return duplicate_names
+
+def remove_duplicates(df):
+    true_dupes = find_true_duplicate_names(df)
+    rows_to_drop = df[df["name"].isin(true_dupes) & df.duplicated(subset="name", keep="first")].index
+
+    df = df.drop(rows_to_drop)
 
     return df
+
 
 
 def clean_date(df):
@@ -51,6 +95,7 @@ def clean_date(df):
 
     return df
 
+
 def expand_tech_scores(df):
     # Expand the tech_self_score dictionary into separate columns
     df = df.copy()
@@ -59,7 +104,7 @@ def expand_tech_scores(df):
         lambda x: x if isinstance(x, dict) else {}
     )
 
-    tech_scores_df = pd.json_normalize(tech_scores)
+    tech_scores_df = pd.json_normalize(tech_scores).add_prefix("tech_self_score_")
 
     df = pd.concat(
         [df.drop(columns=["tech_self_score"]), tech_scores_df],
@@ -73,15 +118,17 @@ def clean_talent_data(df):
         df = standardize_names(df)
         df = clean_date(df)
         df = expand_tech_scores(df)
-        df = remove_duplicate_rows(df)
-
+        df = remove_duplicates(df)
         return df
 
 
 if __name__ == "__main__":
-    from src.extract.s3_reader import load_all_talent_data
+    #from src.extract.s3_reader import load_all_talent_data
 
-    talent_df = load_all_talent_data()
+    #talent_df = load_all_talent_data()
+    csv = 'raw_talent_data.csv'
+    df = pd.read_csv(csv)
+    talent_df = df
 
     print("Before transformation:")
     print(talent_df.shape)
@@ -95,4 +142,5 @@ if __name__ == "__main__":
     print("\nColumns:")
     print(talent_df.columns.tolist())
 
+    talent_df.to_csv('clean_talent_data.csv', index=False)
 

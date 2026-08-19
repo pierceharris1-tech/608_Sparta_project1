@@ -158,7 +158,9 @@ def load_all_talent_data(bucket=BUCKET, max_workers=10):
     Same idea as load_all_academy_data: run several downloads at once
     instead of one at a time."""
 
-    files = list_files(bucket, "Talent/")
+    all_files = list_files(bucket, "Talent/")
+
+    files = [key for key in all_files if key.endswith(".json")]
 
     with ThreadPoolExecutor(max_workers=max_workers) as pool:
         all_rows = list(
