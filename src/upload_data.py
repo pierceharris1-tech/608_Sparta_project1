@@ -1,4 +1,3 @@
-
 import boto3
 from pprint import pprint
 import json
@@ -16,15 +15,15 @@ pprint(bucket_contents)
 s3_resources = boto3.resource('s3')
 bucket = s3_resources.Bucket(bucket_name)
 
-talent = pd.read_csv('raw_talent_data.csv')
-academy = pd.read_csv('raw_academy_data.csv)
+# talent = pd.read_csv('raw_talent_data.csv')
+academy = pd.read_csv('../cleaned_academy_data.csv')
 
-talent.to_csv('talent.csv', index=False)
-s3_client.upload_file(
-    Filename='talent.csv',
-    Bucket= bucket_name,
-    Key='data/talent.csv',
-)
+# talent.to_csv('talent.csv', index=False)
+# s3_client.upload_file(
+#     Filename='talent.csv',
+#     Bucket= bucket_name,
+#     Key='data/talent.csv',
+# )
 
 academy.to_csv('academy.csv', index=False)
 s3_client.upload_file(
