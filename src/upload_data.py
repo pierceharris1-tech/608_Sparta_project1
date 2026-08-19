@@ -15,20 +15,27 @@ pprint(bucket_contents)
 s3_resources = boto3.resource('s3')
 bucket = s3_resources.Bucket(bucket_name)
 
-talent = pd.read_csv('clean_talent_data.csv')
+# talent = pd.read_csv('clean_talent_data.csv')
 # academy = pd.read_csv('raw_academy_data.csv)
+applicants = pd.read_csv('../clean_talent_applications_data.csv')
 
-talent.to_csv('talent.csv', index=False)
+# talent.to_csv('talent.csv', index=False)
+# s3_client.upload_file(
+#     Filename='talent.csv',
+#     Bucket= bucket_name,
+#     Key='data/talent.csv',
+# )
+
+# academy.to_csv('academy.csv', index=False)
+# s3_client.upload_file(
+#     Filename='academy.csv',
+#     Bucket= bucket_name,
+#     Key='data/academy.csv',
+# )
+
+applicants.to_csv('cleaned_talent_applicants.csv', index=False)
 s3_client.upload_file(
-    Filename='talent.csv',
+    Filename='cleaned_talent_applicants.csv',
     Bucket= bucket_name,
-    Key='data/talent.csv',
+    Key='data/cleaned_talent_applicants.csv',
 )
-'''
-academy.to_csv('academy.csv', index=False)
-s3_client.upload_file(
-    Filename='academy.csv',
-    Bucket= bucket_name,
-    Key='data/academy.csv',
-)
-'''
