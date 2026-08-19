@@ -1,15 +1,4 @@
-'''
-Rules:
-- Leave phone numbers as null
-- Change null univeristy values change to 'N/A'
-- leave pass grades as 'N/A'
-- change grades to 1:1 notation rather than 1st
-- split month into month and year 
-- Standardise naming (Etton/Eton) Fuzzy match?
-- repalce missing values with null 
 
-
-'''
 import pandas as pd
 
 
