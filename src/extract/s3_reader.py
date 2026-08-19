@@ -70,6 +70,13 @@ def read_json_from_s3(bucket, key):
     json_content = response['Body'].read().decode('utf-8')
     return json.loads(json_content)
 
+def read_txt_from_s3(bucket, key):
+    """Read a single JSON file from S3 and return it as a Python dict"""
+    s3 = get_s3_client()
+    response = s3.get_object(Bucket=bucket, Key=key)
+    txt_content = response['Body'].read().decode('utf-8')
+    return txt_content
+
 
 def parse_academy_filename(key):
     """Pull course, cohort number, and date out of an Academy filename.
@@ -195,7 +202,26 @@ def load_all_applicant_talent_data(bucket=BUCKET, max_workers=10):
     # turn our list of dicts into one DataFrame, one row per person
     combined = pd.concat(all_tables, ignore_index=True)
     return combined
+
+
+def load_all_sparta_day_data(bucket=BUCKET, max_workers=10):
+
+    all_files = list_files(bucket, "Talent/")
     
+    txt_files = [key for key in all_files if key.endswith(".txt")]
+
+    def read_one(key):
+        text = read_txt_from_s3(bucket, key)
+        return {"source_file": key.split("/")[-1], "raw_text": text}
+
+    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+        all_rows = list(
+            pool.map(read_one, txt_files)
+        )
+
+    # turn our list of dicts into one DataFrame, one row per person
+    combined = pd.DataFrame(all_rows)
+    return combined
     
 if __name__ == "__main__":
     academy_df = load_all_academy_data()
@@ -210,9 +236,14 @@ if __name__ == "__main__":
     print(talent_df_csv.head())
     print(talent_df_csv.shape)
 
+    talent_df_txt = load_all_sparta_day_data()
+    print(talent_df_txt.head())
+    print(talent_df_txt.shape)
+
     # save both raw (but tagged) tables out as CSV files, so we have a
     # local copy to work from without re-downloading from S3 every time
     talent_df_csv.to_csv("raw_applications_data.csv", index=False)
     academy_df.to_csv("raw_academy_data.csv", index=False)
+    talent_df_txt.to_csv("raw_sparta_day_data.csv", index=False)
     # talent_df.to_csv("raw_talent_data.csv", index=False)
     print("Saved raw_academy_data.csv and raw_talent_data.csv")
