@@ -216,13 +216,14 @@ def load_all_applicant_talent_data(bucket=BUCKET, max_workers=10):
         df = read_csv_from_s3(bucket, key)
         df["source_file"] = key.split("/")[-1]
         return df
+    
 
     with ThreadPoolExecutor(max_workers=max_workers) as pool:
         all_tables = list(
             pool.map(read_one, csv_files)
         )
     
-    
+
 
     # turn our list of dicts into one DataFrame, one row per person
     combined = pd.concat(all_tables, ignore_index=True)
