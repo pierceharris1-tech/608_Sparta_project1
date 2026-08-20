@@ -1,6 +1,6 @@
 
 import pandas as pd
-
+import ast
 
 
 '''
@@ -90,7 +90,7 @@ def expand_tech_scores(df):
     df = df.copy()
 
     tech_scores = df["tech_self_score"].apply(
-        lambda x: x if isinstance(x, dict) else {}
+        lambda x: ast.literal_eval(x) if isinstance(x, str) else (x if isinstance(x, dict) else {})
     )
 
     tech_scores_df = pd.json_normalize(tech_scores).add_prefix("tech_self_score_")
