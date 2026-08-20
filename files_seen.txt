@@ -1,0 +1,200 @@
+Academy/Business_20_2019-02-11.csv
+Academy/Business_21_2019-03-18.csv
+Academy/Business_22_2019-04-15.csv
+Academy/Business_23_2019-05-20.csv
+Academy/Business_24_2019-07-15.csv
+Academy/Business_25_2019-07-29.csv
+Academy/Business_26_2019-08-12.csv
+Academy/Business_27_2019-09-16.csv
+Academy/Business_28_2019-10-21.csv
+Academy/Business_29_2019-11-18.csv
+Academy/Business_30_2019-12-30.csv
+Academy/Data_28_2019-02-18.csv
+Academy/Data_29_2019-03-04.csv
+Academy/Data_30_2019-04-08.csv
+Academy/Data_31_2019-05-20.csv
+Academy/Data_32_2019-07-22.csv
+Academy/Data_33_2019-08-05.csv
+Academy/Data_34_2019-08-19.csv
+Academy/Data_35_2019-09-23.csv
+Academy/Data_36_2019-10-28.csv
+Academy/Data_37_2019-11-18.csv
+Academy/Data_38_2019-12-16.csv
+Academy/Data_39_2019-12-30.csv
+Academy/Engineering_17_2019-02-18.csv
+Academy/Engineering_18_2019-04-01.csv
+Academy/Engineering_19_2019-04-29.csv
+Academy/Engineering_20_2019-05-27.csv
+Academy/Engineering_21_2019-07-15.csv
+Academy/Engineering_22_2019-07-22.csv
+Academy/Engineering_23_2019-08-12.csv
+Academy/Engineering_24_2019-09-16.csv
+Academy/Engineering_25_2019-09-23.csv
+Academy/Engineering_26_2019-10-28.csv
+Academy/Engineering_27_2019-11-25.csv
+Academy/Engineering_28_2019-12-16.csv
+Academy/Engineering_29_2019-12-30.csv
+Talent/April2019Applicants.csv
+Talent/Aug2019Applicants.csv
+Talent/Dec2019Applicants.csv
+Talent/Feb2019Applicants.csv
+Talent/Jan2019Applicants.csv
+Talent/July2019Applicants.csv
+Talent/June2019Applicants.csv
+Talent/March2019Applicants.csv
+Talent/May2019Applicants.csv
+Talent/Nov2019Applicants.csv
+Talent/Oct2019Applicants.csv
+Talent/Sept2019Applicants.csv
+Talent/Sparta Day 1 August 2019.txt
+Talent/Sparta Day 1 May 2019.txt
+Talent/Sparta Day 1 October 2019.txt
+Talent/Sparta Day 10 April 2019.txt
+Talent/Sparta Day 10 December 2019.txt
+Talent/Sparta Day 10 January 2019.txt
+Talent/Sparta Day 10 July 2019.txt
+Talent/Sparta Day 10 October 2019.txt
+Talent/Sparta Day 10 September 2019.txt
+Talent/Sparta Day 11 April 2019.txt
+Talent/Sparta Day 11 December 2019.txt
+Talent/Sparta Day 11 July 2019.txt
+Talent/Sparta Day 11 June 2019.txt
+Talent/Sparta Day 11 September 2019.txt
+Talent/Sparta Day 12 December 2019.txt
+Talent/Sparta Day 12 February 2019.txt
+Talent/Sparta Day 12 June 2019.txt
+Talent/Sparta Day 12 March 2019.txt
+Talent/Sparta Day 12 November 2019.txt
+Talent/Sparta Day 12 September 2019.txt
+Talent/Sparta Day 13 August 2019.txt
+Talent/Sparta Day 13 February 2019.txt
+Talent/Sparta Day 13 June 2019.txt
+Talent/Sparta Day 13 March 2019.txt
+Talent/Sparta Day 13 November 2019.txt
+Talent/Sparta Day 14 August 2019.txt
+Talent/Sparta Day 14 February 2019.txt
+Talent/Sparta Day 14 March 2019.txt
+Talent/Sparta Day 14 May 2019.txt
+Talent/Sparta Day 14 November 2019.txt
+Talent/Sparta Day 15 August 2019.txt
+Talent/Sparta Day 15 January 2019.txt
+Talent/Sparta Day 15 May 2019.txt
+Talent/Sparta Day 15 October 2019.txt
+Talent/Sparta Day 16 April 2019.txt
+Talent/Sparta Day 16 January 2019.txt
+Talent/Sparta Day 16 July 2019.txt
+Talent/Sparta Day 16 May 2019.txt
+Talent/Sparta Day 16 October 2019.txt
+Talent/Sparta Day 17 April 2019.txt
+Talent/Sparta Day 17 December 2019.txt
+Talent/Sparta Day 17 January 2019.txt
+Talent/Sparta Day 17 July 2019.txt
+Talent/Sparta Day 17 October 2019.txt
+Talent/Sparta Day 17 September 2019.txt
+Talent/Sparta Day 18 April 2019.txt
+Talent/Sparta Day 18 December 2019.txt
+Talent/Sparta Day 18 July 2019.txt
+Talent/Sparta Day 18 June 2019.txt
+Talent/Sparta Day 18 September 2019.txt
+Talent/Sparta Day 19 December 2019.txt
+Talent/Sparta Day 19 February 2019.txt
+Talent/Sparta Day 19 June 2019.txt
+Talent/Sparta Day 19 March 2019.txt
+Talent/Sparta Day 19 November 2019.txt
+Talent/Sparta Day 19 September 2019.txt
+Talent/Sparta Day 2 April 2019.txt
+Talent/Sparta Day 2 January 2019.txt
+Talent/Sparta Day 2 July 2019.txt
+Talent/Sparta Day 2 May 2019.txt
+Talent/Sparta Day 2 October 2019.txt
+Talent/Sparta Day 20 August 2019.txt
+Talent/Sparta Day 20 February 2019.txt
+Talent/Sparta Day 20 June 2019.txt
+Talent/Sparta Day 20 March 2019.txt
+Talent/Sparta Day 20 November 2019.txt
+Talent/Sparta Day 21 August 2019.txt
+Talent/Sparta Day 21 February 2019.txt
+Talent/Sparta Day 21 March 2019.txt
+Talent/Sparta Day 21 May 2019.txt
+Talent/Sparta Day 21 November 2019.txt
+Talent/Sparta Day 22 August 2019.txt
+Talent/Sparta Day 22 January 2019.txt
+Talent/Sparta Day 22 May 2019.txt
+Talent/Sparta Day 22 October 2019.txt
+Talent/Sparta Day 23 April 2019.txt
+Talent/Sparta Day 23 January 2019.txt
+Talent/Sparta Day 23 July 2019.txt
+Talent/Sparta Day 23 May 2019.txt
+Talent/Sparta Day 23 October 2019.txt
+Talent/Sparta Day 24 April 2019.txt
+Talent/Sparta Day 24 January 2019.txt
+Talent/Sparta Day 24 July 2019.txt
+Talent/Sparta Day 24 October 2019.txt
+Talent/Sparta Day 24 September 2019.txt
+Talent/Sparta Day 25 April 2019.txt
+Talent/Sparta Day 25 July 2019.txt
+Talent/Sparta Day 25 June 2019.txt
+Talent/Sparta Day 25 September 2019.txt
+Talent/Sparta Day 26 February 2019.txt
+Talent/Sparta Day 26 June 2019.txt
+Talent/Sparta Day 26 March 2019.txt
+Talent/Sparta Day 26 November 2019.txt
+Talent/Sparta Day 26 September 2019.txt
+Talent/Sparta Day 27 August 2019.txt
+Talent/Sparta Day 27 February 2019.txt
+Talent/Sparta Day 27 June 2019.txt
+Talent/Sparta Day 27 March 2019.txt
+Talent/Sparta Day 27 November 2019.txt
+Talent/Sparta Day 28 August 2019.txt
+Talent/Sparta Day 28 February 2019.txt
+Talent/Sparta Day 28 March 2019.txt
+Talent/Sparta Day 28 May 2019.txt
+Talent/Sparta Day 28 November 2019.txt
+Talent/Sparta Day 29 August 2019.txt
+Talent/Sparta Day 29 January 2019.txt
+Talent/Sparta Day 29 May 2019.txt
+Talent/Sparta Day 29 October 2019.txt
+Talent/Sparta Day 3 April 2019.txt
+Talent/Sparta Day 3 December 2019.txt
+Talent/Sparta Day 3 January 2019.txt
+Talent/Sparta Day 3 July 2019.txt
+Talent/Sparta Day 3 October 2019.txt
+Talent/Sparta Day 3 September 2019.txt
+Talent/Sparta Day 30 April 2019.txt
+Talent/Sparta Day 30 January 2019.txt
+Talent/Sparta Day 30 July 2019.txt
+Talent/Sparta Day 30 May 2019.txt
+Talent/Sparta Day 30 October 2019.txt
+Talent/Sparta Day 31 January 2019.txt
+Talent/Sparta Day 31 July 2019.txt
+Talent/Sparta Day 31 October 2019.txt
+Talent/Sparta Day 4 April 2019.txt
+Talent/Sparta Day 4 December 2019.txt
+Talent/Sparta Day 4 July 2019.txt
+Talent/Sparta Day 4 June 2019.txt
+Talent/Sparta Day 4 September 2019.txt
+Talent/Sparta Day 5 December 2019.txt
+Talent/Sparta Day 5 February 2019.txt
+Talent/Sparta Day 5 June 2019.txt
+Talent/Sparta Day 5 March 2019.txt
+Talent/Sparta Day 5 November 2019.txt
+Talent/Sparta Day 5 September 2019.txt
+Talent/Sparta Day 6 August 2019.txt
+Talent/Sparta Day 6 February 2019.txt
+Talent/Sparta Day 6 June 2019.txt
+Talent/Sparta Day 6 March 2019.txt
+Talent/Sparta Day 6 November 2019.txt
+Talent/Sparta Day 7 August 2019.txt
+Talent/Sparta Day 7 February 2019.txt
+Talent/Sparta Day 7 March 2019.txt
+Talent/Sparta Day 7 May 2019.txt
+Talent/Sparta Day 7 November 2019.txt
+Talent/Sparta Day 8 August 2019.txt
+Talent/Sparta Day 8 January 2019.txt
+Talent/Sparta Day 8 May 2019.txt
+Talent/Sparta Day 8 October 2019.txt
+Talent/Sparta Day 9 April 2019.txt
+Talent/Sparta Day 9 January 2019.txt
+Talent/Sparta Day 9 July 2019.txt
+Talent/Sparta Day 9 May 2019.txt
+Talent/Sparta Day 9 October 2019.txt
