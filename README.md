@@ -50,6 +50,8 @@ src/
 requirements.txt                         - Python dependencies
 .env                                     - local AWS credentials (gitignored, never committed)
 files_seen.txt                           - bookmark file, see "Incremental loading" below
+legacy/                                  - stale raw CSVs kept for reference only,
+                                            not read by anything in the pipeline
 ```
 
 ## Extract: `src/extract/s3_reader.py`
