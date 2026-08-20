@@ -71,22 +71,28 @@ def get_month_and_year(df):
     return df
     
 
+def drop_id(df):
+    df = df.drop(columns = ['id'])
+    return df
+
 if __name__ == "__main__":
 
-    date_fix = get_month_and_year(df)
-    print(date_fix)
+    df = get_month_and_year(df)
 
-    inv_similar_names = standardise_names(df, "invited_by")
+    before_report = standardise_names(df, "invited_by")
     print("Fuzzy matches before fix:")
-    print(inv_similar_names)
+    print(before_report)
 
-    df = fix_names(df)  # reassign — fix_names mutates in place but reassigning is safest
+    df = fix_names(df)
 
-    remaining = standardise_names(df, "invited_by")
+    after_report = standardise_names(df, "invited_by")
     print("Fuzzy matches after fix (should be empty):")
-    print(remaining)
+    print(after_report)
 
-    df.to_csv('clean_talent_applications_data.csv', index=False)
+    df = drop_id(df)
+
+    df.to_csv('clean_talent_applications_data_updated.csv', index=False)
+
 
 
 

@@ -1,3 +1,4 @@
+from datetime import date
 import pandas as pd
 
 
@@ -52,6 +53,9 @@ def melt_weekly_scores(df):
     for index, row in df.iterrows():
         name = row["name"]
         trainer = row["trainer"]
+        date = row["date"]
+        cohort = row["cohort"]
+        course = row["course"]
 
         for week in sorted(weeks):
             for trait in traits:
@@ -70,7 +74,10 @@ def melt_weekly_scores(df):
                     "trainer": trainer,
                     "trait": trait,
                     "week": week,
-                    "score": score
+                    "score": score,
+                    "date": date,
+                    "course": course,
+                    "cohort": cohort
                 })
 
     return pd.DataFrame(new_rows)
@@ -110,4 +117,4 @@ if __name__ == "__main__":
  
     # Save the cleaned data out as its own CSV, ready to send to Storage
     cleaned_df.to_csv("cleaned_academy_data.csv", index=False)
-    print("Saved cleaned_academy_data.csv")
+    print("Saved cleaned_academy_data_updated.csv")
