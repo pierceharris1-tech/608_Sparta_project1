@@ -32,20 +32,35 @@ jobs:
         run: python3 src/extract/s3_reader.py
 
       - name: Clean the academy data
+        id: clean_academy
         continue-on-error: true
         run: python3 src/transform/clean_academy.py
 
       - name: Clean the talent JSON data
+        id: clean_talent_json
         continue-on-error: true
         run: python3 src/transform/clean_talent_json.py
 
       - name: Clean the talent applications data
+        id: clean_talent_csv
         continue-on-error: true
         run: python3 src/transform/clean_talent_csv.py
 
       - name: Clean the Sparta Day data
+        id: clean_sparta_day
         continue-on-error: true
         run: python3 src/transform/talent_txt_clean.py
+
+      - name: Report on cleaning step results
+        if: always()
+        run: |
+          echo "## Cleaning step results" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Step | Outcome |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Academy | ${{ steps.clean_academy.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Talent JSON | ${{ steps.clean_talent_json.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Talent applications | ${{ steps.clean_talent_csv.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Sparta Day | ${{ steps.clean_sparta_day.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload cleaned data to S3
         env:
@@ -62,3 +77,13 @@ jobs:
           git diff --staged --quiet || git commit -m "Automated nightly data refresh"
           git pull --rebase origin main
           git push
+
+      - name: Fail the run if any cleaning step failed
+        if: |
+          steps.clean_academy.outcome == 'failure' ||
+          steps.clean_talent_json.outcome == 'failure' ||
+          steps.clean_talent_csv.outcome == 'failure' ||
+          steps.clean_sparta_day.outcome == 'failure'
+        run: |
+          echo "One or more cleaning steps failed - see the summary above for which."
+          exit 1

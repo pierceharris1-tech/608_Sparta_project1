@@ -298,9 +298,11 @@ if __name__ == "__main__":
     if academy_errors:
         print(f"{len(academy_errors)} Academy file(s) failed:", academy_errors)
 
-    # talent_df = load_all_talent_data()
-    # print(talent_df.head())
-    # print(talent_df.shape)
+    talent_df, talent_errors = load_all_talent_data()
+    print(talent_df.head())
+    print(talent_df.shape)
+    if talent_errors:
+        print(f"{len(talent_errors)} Talent JSON file(s) failed:", talent_errors)
 
     talent_df_csv, applicant_errors = load_all_applicant_talent_data()
     print(talent_df_csv.head())
@@ -319,5 +321,5 @@ if __name__ == "__main__":
     _append_to_csv(talent_df_csv, "raw_applications_data.csv")
     _append_to_csv(academy_df, "raw_academy_data.csv")
     _append_to_csv(talent_df_txt, "raw_sparta_day_data.csv")
-    # talent_df.to_csv("raw_talent_data.csv", index=False)
-    print("Saved raw_academy_data.csv, raw_applications_data.csv, and raw_sparta_day_data.csv")
+    _append_to_csv(talent_df, "raw_talent_data.csv")
+    print("Saved raw_academy_data.csv, raw_applications_data.csv, raw_sparta_day_data.csv, and raw_talent_data.csv")
