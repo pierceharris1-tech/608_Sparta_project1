@@ -13,16 +13,20 @@ BUCKET = "data608-final-project-135928476890-eu-central-1-an"
 
 log_file = "files_seen.txt"
 
-def create_log_file():
-    if os.path.exists(log_file):
-        return list
+def load_seen_files():
+    """Return the set of S3 keys we've already successfully processed."""
+    if not os.path.exists(log_file):
+        return set()
     with open(log_file, "r") as file:
-        return list(line.strip() for line in file)
+        return set(line.strip() for line in file if line.strip())
 
 
-def update_log_file(new_keys):
+def mark_files_seen(keys):
+    """Append newly-processed keys to the bookmark file so we skip them next run."""
+    if not keys:
+        return
     with open(log_file, "a") as file:
-        for key in new_keys:
+        for key in keys:
             file.write(key + "\n")
 
 def get_s3_client():
@@ -33,6 +37,34 @@ def get_s3_client():
         aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
         aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY")
     )
+
+
+# Shared helper function that all data loaders can reuse for dowloading multiple files 
+# Using the Thread Pool system with error handling so it doesnt keep looping 
+# At failed pulls
+
+def _run_with_error_handling(keys, read_one, max_workers=10):
+    """Run read_one(key) across all keys in a thread pool without letting
+    one failure kill the batch. Returns (results, succeeded_keys, errors)."""
+    results = []
+    succeeded_keys = []
+    errors = []
+
+    def safe_read(key):
+        try:
+            return key, read_one(key), None
+        except Exception as exc:
+            return key, None, str(exc)
+
+    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+        for key, result, error in pool.map(safe_read, keys):
+            if error is None:
+                results.append(result)
+                succeeded_keys.append(key)
+            else:
+                errors.append({"key": key, "error": error})
+
+    return results, succeeded_keys, errors
 
 
 def list_files(bucket, prefix):
@@ -138,47 +170,33 @@ def _read_one_academy_file(bucket, key):
 
     return df
 
-
-def load_all_academy_data(bucket=BUCKET, max_workers=10):
-    """Read every Academy CSV file from S3, tag each row with its course/
-    cohort/date (from the filename), and combine them all into one big
-    DataFrame.
-
-    Instead of downloading one file, waiting for it to finish, then
-    downloading the next (slow - most of the time is just waiting on the
-    network), we open up several downloads at once using a thread pool.
-    Think of it like having multiple checkout lines open instead of one."""
-
-    all_files = list_files(bucket, "Academy/")
-
-    already_done = create_log_file()
-    files = [key for key in all_files if key not in already_done]
-
-    if len(files) == 0:
-        print("no new Academy files to add")
-        return 
-
-    with ThreadPoolExecutor(max_workers=max_workers) as pool:
-        # pool.map runs _read_one_academy_file(bucket, key) for every key,
-        # but up to max_workers of them are running in parallel at once.
-        # It still returns the results in the same order as `files`.
-        all_tables = list(
-            pool.map(lambda key: _read_one_academy_file(bucket, key), files)
-        )
-
-    
-
-    # stick all the individual file DataFrames together into one
-    combined = pd.concat(all_tables, ignore_index=True)
-    return combined, files
-
-
 def _read_one_talent_file(bucket, key):
     """Download and tag a single Talent file. This is the 'unit of work'
     that we'll run many of at the same time, instead of one after another."""
     record = read_json_from_s3(bucket, key)
     record["talent_id"] = parse_talent_filename(key)
     return record
+
+
+def load_all_academy_data(bucket=BUCKET, max_workers=10):
+    seen = load_seen_files()
+    all_files = list_files(bucket, "Academy/")
+    files = [key for key in all_files if key not in seen]
+
+    if not files:
+        print("No new Academy files to process")
+        return pd.DataFrame(), []
+
+    tables, succeeded, errors = _run_with_error_handling(
+        files, lambda key: _read_one_academy_file(bucket, key), max_workers
+    )
+
+    combined = pd.concat(tables, ignore_index=True) if tables else pd.DataFrame()
+    mark_files_seen(succeeded)
+
+    return combined, errors
+
+
 
 def load_all_talent_data(bucket=BUCKET, max_workers=10):
     """Read every Talent JSON file from S3, tag each row with its TalentID
@@ -187,89 +205,119 @@ def load_all_talent_data(bucket=BUCKET, max_workers=10):
     Same idea as load_all_academy_data: run several downloads at once
     instead of one at a time."""
 
+    seen = load_seen_files()
     all_files = list_files(bucket, "Talent/")
+    files = [key for key in all_files if key.endswith(".json") and key not in seen]
 
-    files = [key for key in all_files if key.endswith(".json")]
+    if not files:
+        print("No new Talent JSON files to process")
+        return pd.DataFrame(), []
 
-    with ThreadPoolExecutor(max_workers=max_workers) as pool:
-        all_rows = list(
-            pool.map(lambda key: _read_one_talent_file(bucket, key), files)
-        )
+    rows, succeeded, errors = _run_with_error_handling(
+        files, lambda key: _read_one_talent_file(bucket, key), max_workers
+    )
 
-    # turn our list of dicts into one DataFrame, one row per person
-    combined = pd.DataFrame(all_rows)
-    return combined
+    combined = pd.DataFrame(rows) if rows else pd.DataFrame()
+    mark_files_seen(succeeded)
+
+    return combined, errors
+
 
 
 def load_all_applicant_talent_data(bucket=BUCKET, max_workers=10):
-    """Read every Talent csv file from S3, tag each row with its cohort
-    (from the filename), and combine them all into one big DataFrame.
+    """Read every Talent csv file from S3, tag each row with its source
+    file, and combine them all into one big DataFrame.
 
     Same idea as load_all_academy_data: run several downloads at once
     instead of one at a time."""
 
+    seen = load_seen_files()
     all_files = list_files(bucket, "Talent/")
+    files = [
+        key for key in all_files
+        if key.endswith("Applicants.csv") and key not in seen
+    ]
 
-    csv_files = [key for key in all_files if key.endswith("Applicants.csv")]
+    if not files:
+        print("No new Talent application CSV files to process")
+        return pd.DataFrame(), []
 
     def read_one(key):
         df = read_csv_from_s3(bucket, key)
         df["source_file"] = key.split("/")[-1]
         return df
-    
 
-    with ThreadPoolExecutor(max_workers=max_workers) as pool:
-        all_tables = list(
-            pool.map(read_one, csv_files)
-        )
-    
+    tables, succeeded, errors = _run_with_error_handling(files, read_one, max_workers)
 
+    combined = pd.concat(tables, ignore_index=True) if tables else pd.DataFrame()
+    mark_files_seen(succeeded)
 
-    # turn our list of dicts into one DataFrame, one row per person
-    combined = pd.concat(all_tables, ignore_index=True)
-    return combined
+    return combined, errors
 
 
 def load_all_sparta_day_data(bucket=BUCKET, max_workers=10):
+    """Read every Sparta Day txt file from S3, tag each row with its source
+    file, and combine them all into one big DataFrame.
 
+    Same idea as load_all_academy_data: run several downloads at once
+    instead of one at a time."""
+
+    seen = load_seen_files()
     all_files = list_files(bucket, "Talent/")
-    
-    txt_files = [key for key in all_files if key.endswith(".txt")]
+    files = [key for key in all_files if key.endswith(".txt") and key not in seen]
+
+    if not files:
+        print("No new Sparta Day txt files to process")
+        return pd.DataFrame(), []
 
     def read_one(key):
         text = read_txt_from_s3(bucket, key)
         return {"source_file": key.split("/")[-1], "raw_text": text}
 
-    with ThreadPoolExecutor(max_workers=max_workers) as pool:
-        all_rows = list(
-            pool.map(read_one, txt_files)
-        )
+    rows, succeeded, errors = _run_with_error_handling(files, read_one, max_workers)
 
-    # turn our list of dicts into one DataFrame, one row per person
-    combined = pd.DataFrame(all_rows)
-    return combined
+    combined = pd.DataFrame(rows) if rows else pd.DataFrame()
+    mark_files_seen(succeeded)
+
+    return combined, errors
     
+def _append_to_csv(df, path):
+    """Append new rows to an existing raw CSV (or create it if this is the
+    first run), so incremental runs don't wipe out previously-collected
+    data - only writes the header if the file doesn't already exist."""
+    if df.empty:
+        return
+    file_exists = os.path.exists(path)
+    df.to_csv(path, mode="a" if file_exists else "w", header=not file_exists, index=False)
+
+
 if __name__ == "__main__":
-    academy_df = load_all_academy_data()
+    academy_df, academy_errors = load_all_academy_data()
     print(academy_df.head())
     print(academy_df.shape)
+    if academy_errors:
+        print(f"{len(academy_errors)} Academy file(s) failed:", academy_errors)
 
     # talent_df = load_all_talent_data()
     # print(talent_df.head())
     # print(talent_df.shape)
 
-    talent_df_csv = load_all_applicant_talent_data()
+    talent_df_csv, applicant_errors = load_all_applicant_talent_data()
     print(talent_df_csv.head())
     print(talent_df_csv.shape)
+    if applicant_errors:
+        print(f"{len(applicant_errors)} Talent application file(s) failed:", applicant_errors)
 
-    talent_df_txt = load_all_sparta_day_data()
+    talent_df_txt, sparta_day_errors = load_all_sparta_day_data()
     print(talent_df_txt.head())
     print(talent_df_txt.shape)
+    if sparta_day_errors:
+        print(f"{len(sparta_day_errors)} Sparta Day file(s) failed:", sparta_day_errors)
 
-    # save both raw (but tagged) tables out as CSV files, so we have a
-    # local copy to work from without re-downloading from S3 every time
-    talent_df_csv.to_csv("raw_applications_data.csv", index=False)
-    academy_df.to_csv("raw_academy_data.csv", index=False)
-    talent_df_txt.to_csv("raw_sparta_day_data.csv", index=False)
+    # append the new rows (but tagged) onto the raw CSVs, so we build up a
+    # local copy over time without re-downloading from S3 every time
+    _append_to_csv(talent_df_csv, "raw_applications_data.csv")
+    _append_to_csv(academy_df, "raw_academy_data.csv")
+    _append_to_csv(talent_df_txt, "raw_sparta_day_data.csv")
     # talent_df.to_csv("raw_talent_data.csv", index=False)
-    print("Saved raw_academy_data.csv and raw_talent_data.csv")
+    print("Saved raw_academy_data.csv, raw_applications_data.csv, and raw_sparta_day_data.csv")
