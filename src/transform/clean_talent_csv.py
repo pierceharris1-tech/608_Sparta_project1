@@ -1,10 +1,7 @@
 import pandas as pd 
 from fuzzywuzzy import fuzz
 import re
-
-df = pd.read_csv('raw_applications_data.csv')
-
-print(df.duplicated().sum())
+import sys
 
 
 def standardise_names(df, column, threshold=80):
@@ -76,23 +73,28 @@ def drop_id(df):
     return df
 
 if __name__ == "__main__":
+    try:
+        df = pd.read_csv('raw_applications_data.csv')
+        print(df.duplicated().sum())
 
-    df = get_month_and_year(df)
+        df = get_month_and_year(df)
 
-    before_report = standardise_names(df, "invited_by")
-    print("Fuzzy matches before fix:")
-    print(before_report)
+        before_report = standardise_names(df, "invited_by")
+        print("Fuzzy matches before fix:")
+        print(before_report)
 
-    df = fix_names(df)
+        df = fix_names(df)
 
-    after_report = standardise_names(df, "invited_by")
-    print("Fuzzy matches after fix (should be empty):")
-    print(after_report)
+        after_report = standardise_names(df, "invited_by")
+        print("Fuzzy matches after fix (should be empty):")
+        print(after_report)
 
-    df = drop_id(df)
+        df = drop_id(df)
 
-    df.to_csv('clean_talent_applications_data_updated.csv', index=False)
-
+        df.to_csv('clean_talent_applications_data_updated.csv', index=False)
+    except Exception as exc:
+        print(f"ERROR: clean_talent_csv.py failed - {exc}")
+        sys.exit(3)
 
 
 

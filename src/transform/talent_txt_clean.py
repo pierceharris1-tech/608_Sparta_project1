@@ -1,5 +1,6 @@
 
 import pandas as pd 
+import sys
  
 
 def parse_sparta_day_text(raw_text):
@@ -85,10 +86,15 @@ def clean_sparta_day_data(raw_df):
 
 
 if __name__ == "__main__":
-    raw_df = pd.read_csv("raw_sparta_day_data.csv")
-    cleaned_df = clean_sparta_day_data(raw_df)
+    try:
+        raw_df = pd.read_csv("raw_sparta_day_data.csv")
+        cleaned_df = clean_sparta_day_data(raw_df)
 
-    print(cleaned_df.head())
-    print(cleaned_df.shape)
+        print(cleaned_df.head())
+        print(cleaned_df.shape)
 
-    cleaned_df.to_csv("cleaned_sparta_day_data.csv", index=False)
+        cleaned_df.to_csv("cleaned_sparta_day_data.csv", index=False)
+    
+    except Exception as exc:
+        print(f"ERROR: talent_txt_clean.py failed - {exc}")
+        sys.exit(4)

@@ -1,6 +1,7 @@
 
 import pandas as pd
 import ast
+import sys
 
 
 '''
@@ -106,30 +107,34 @@ def clean_talent_data(df):
         # Run all Talent cleaning and transformation steps in order
         df = standardize_names(df)
         df = clean_date(df)
-        df = expand_tech_scores(df)
         df = remove_duplicates(df)
         return df
 
 
 if __name__ == "__main__":
-    #from src.extract.s3_reader import load_all_talent_data
+    try:
+        #from src.extract.s3_reader import load_all_talent_data
 
-    #talent_df = load_all_talent_data()
-    csv = 'raw_talent_data.csv'
-    df = pd.read_csv(csv)
-    talent_df = df
+        #talent_df = load_all_talent_data()
+        csv = 'raw_talent_data.csv'
+        df = pd.read_csv(csv)
+        talent_df = df
 
-    print("Before transformation:")
-    print(talent_df.shape)
-    print(talent_df.head())
+        print("Before transformation:")
+        print(talent_df.shape)
+        print(talent_df.head())
 
-    talent_df = clean_talent_data(talent_df)
+        talent_df = clean_talent_data(talent_df)
 
-    print("\nAfter transformation:")
-    print(talent_df.shape)
-    print(talent_df.head())
-    print("\nColumns:")
-    print(talent_df.columns.tolist())
+        print("\nAfter transformation:")
+        print(talent_df.shape)
+        print(talent_df.head())
+        print("\nColumns:")
+        print(talent_df.columns.tolist())
 
-    talent_df.to_csv('clean_talent_data.csv', index=False)
+        talent_df.to_csv('clean_talent_data.csv', index=False)
+
+    except Exception as exc:
+        print(f"ERROR: clean_talent_json.py failed - {exc}")
+        sys.exit(2)
 

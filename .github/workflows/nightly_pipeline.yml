@@ -26,22 +26,31 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
         run: python3 src/extract/s3_reader.py
 
       - name: Clean the academy data
+        continue-on-error: true
         run: python3 src/transform/clean_academy.py
 
-      - name: Clean the talent data
-        run: |
-          python3 src/transform/clean_talent_json.py
-          python3 src/transform/clean_talent_csv.py
-          python3 src/transform/talent_txt_clean.py
+      - name: Clean the talent JSON data
+        continue-on-error: true
+        run: python3 src/transform/clean_talent_json.py
+
+      - name: Clean the talent applications data
+        continue-on-error: true
+        run: python3 src/transform/clean_talent_csv.py
+
+      - name: Clean the Sparta Day data
+        continue-on-error: true
+        run: python3 src/transform/talent_txt_clean.py
 
       - name: Upload cleaned data to S3
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: python3 src/upload_data.py
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: python3 "src/load/Pierce-data_uplaod.py"
 
       - name: Commit and push any new/updated local data
         run: |

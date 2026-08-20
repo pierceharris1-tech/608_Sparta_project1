@@ -1,5 +1,6 @@
 from datetime import date
 import pandas as pd
+import sys 
 
 
 def standardize_names(df):
@@ -105,16 +106,21 @@ def clean_academy_data(df):
     return df
 
 if __name__ == "__main__":
-    # Read in the raw data we pulled from S3
-    raw_df = pd.read_csv("raw_academy_data.csv")
- 
-    # Run it through the full cleaning pipeline
-    cleaned_df = clean_academy_data(raw_df)
- 
-    # Preview the result before saving, so we can eyeball it
-    print(cleaned_df.head())
-    print(cleaned_df.shape)
- 
-    # Save the cleaned data out as its own CSV, ready to send to Storage
-    cleaned_df.to_csv("cleaned_academy_data.csv", index=False)
-    print("Saved cleaned_academy_data_updated.csv")
+    try:
+        # Read in the raw data we pulled from S3
+        raw_df = pd.read_csv("raw_academy_data.csv")
+    
+        # Run it through the full cleaning pipeline
+        cleaned_df = clean_academy_data(raw_df)
+    
+        # Preview the result before saving, so we can eyeball it
+        print(cleaned_df.head())
+        print(cleaned_df.shape)
+    
+        # Save the cleaned data out as its own CSV, ready to send to Storage
+        cleaned_df.to_csv("cleaned_academy_data.csv", index=False)
+        print("Saved cleaned_academy_data_updated.csv")
+    
+    except Exception as exc:
+        print(f"ERROR: clean_academy.py failed - {exc}")
+        sys.exit(1)
