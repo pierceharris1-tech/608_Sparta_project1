@@ -1,4 +1,4 @@
-name,date,strengths,weaknesses,self_development,geo_flex,financial_support_self,result,course_interest,talent_id,tech_self_score_C#,tech_self_score_Java,tech_self_score_R,tech_self_score_JavaScript,tech_self_score_Python,tech_self_score_C++,tech_self_score_Ruby,tech_self_score_SPSS,tech_self_score_PHP
+name,date,strengths,weaknesses,self_development,geo_flex,financial_support_self,result,course_interest,talent_id,Self_score_C#,Self_score_Java,Self_score_R,Self_score_JavaScript,Self_score_Python,Self_score_C++,Self_score_Ruby,Self_score_SPSS,Self_score_PHP
 Stillmann Castano,2019-08-22,['Charisma'],"['Distracted', 'Impulsive', 'Introverted']",Yes,Yes,Yes,Pass,Business,10383,6.0,5.0,2.0,2.0,,,,,
 Hilary Willmore,2019-08-01,"['Patient', 'Curious', 'Problem Solving']","['Overbearing', 'Chatty', 'Indifferent']",No,Yes,Yes,Fail,Data,10384,4.0,2.0,,,1.0,4.0,,,
 Efrem Whipple,2019-08-22,"['Courteous', 'Independent', 'Patient']","['Introverted', 'Impulsive', 'Anxious']",Yes,Yes,Yes,Pass,Business,10385,,,,,,4.0,4.0,,

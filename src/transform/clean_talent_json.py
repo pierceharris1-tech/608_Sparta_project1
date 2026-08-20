@@ -93,7 +93,7 @@ def expand_tech_scores(df):
         lambda x: ast.literal_eval(x) if isinstance(x, str) else (x if isinstance(x, dict) else {})
     )
 
-    tech_scores_df = pd.json_normalize(tech_scores).add_prefix("tech_self_score_")
+    tech_scores_df = pd.json_normalize(tech_scores).add_prefix("Self_score_")
 
     df = pd.concat(
         [df.drop(columns=["tech_self_score"]), tech_scores_df],
