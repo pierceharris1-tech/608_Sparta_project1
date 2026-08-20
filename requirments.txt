@@ -1,5 +1,0 @@
-boto3
-pandas
-python-dotenv
-fuzzywuzzy
-python-Levenshtein
