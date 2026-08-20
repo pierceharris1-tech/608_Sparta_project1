@@ -11,8 +11,23 @@ load_dotenv()
 BUCKET = "data608-final-project-135928476890-eu-central-1-an"
 
 
+log_file = "files_seen.txt"
+
+def create_log_file():
+    if os.path.exists(log_file):
+        return list
+    with open(log_file, "r") as file:
+        return list(line.strip() for line in file)
+
+
+def update_log_file(new_keys):
+    with open(log_file, "a") as file:
+        for key in new_keys:
+            file.write(key + "\n")
+
 def get_s3_client():
     """Create and return an authenticated S3 client using credentials from .env"""
+
     return boto3.client(
         's3',
         aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
@@ -134,7 +149,14 @@ def load_all_academy_data(bucket=BUCKET, max_workers=10):
     network), we open up several downloads at once using a thread pool.
     Think of it like having multiple checkout lines open instead of one."""
 
-    files = list_files(bucket, "Academy/")
+    all_files = list_files(bucket, "Academy/")
+
+    already_done = create_log_file()
+    files = [key for key in all_files if key not in already_done]
+
+    if len(files) == 0:
+        print("no new Academy files to add")
+        return 
 
     with ThreadPoolExecutor(max_workers=max_workers) as pool:
         # pool.map runs _read_one_academy_file(bucket, key) for every key,
@@ -144,19 +166,20 @@ def load_all_academy_data(bucket=BUCKET, max_workers=10):
             pool.map(lambda key: _read_one_academy_file(bucket, key), files)
         )
 
+    
+
     # stick all the individual file DataFrames together into one
     combined = pd.concat(all_tables, ignore_index=True)
-    return combined
+    return combined, files
 
-'''
+
 def _read_one_talent_file(bucket, key):
     """Download and tag a single Talent file. This is the 'unit of work'
     that we'll run many of at the same time, instead of one after another."""
     record = read_json_from_s3(bucket, key)
     record["talent_id"] = parse_talent_filename(key)
     return record
-'''
-'''
+
 def load_all_talent_data(bucket=BUCKET, max_workers=10):
     """Read every Talent JSON file from S3, tag each row with its TalentID
     (from the filename), and combine them all into one big DataFrame.
@@ -177,7 +200,7 @@ def load_all_talent_data(bucket=BUCKET, max_workers=10):
     combined = pd.DataFrame(all_rows)
     return combined
 
-'''
+
 def load_all_applicant_talent_data(bucket=BUCKET, max_workers=10):
     """Read every Talent csv file from S3, tag each row with its cohort
     (from the filename), and combine them all into one big DataFrame.
@@ -198,6 +221,8 @@ def load_all_applicant_talent_data(bucket=BUCKET, max_workers=10):
         all_tables = list(
             pool.map(read_one, csv_files)
         )
+    
+    
 
     # turn our list of dicts into one DataFrame, one row per person
     combined = pd.concat(all_tables, ignore_index=True)
