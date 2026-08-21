@@ -55,7 +55,9 @@ def find_true_duplicate_names(df):
                 if column == "talent_id":
                     continue
 
-                if first_row[column] != other_row[column]:
+                val1, val2 = first_row[column], other_row[column]
+                both_missing = pd.isna(val1) and pd.isna(val2)
+                if val1 != val2 and not both_missing:
                     differences.append(column)
 
             if not differences:
