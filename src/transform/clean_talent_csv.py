@@ -72,10 +72,22 @@ def drop_id(df):
     df = df.drop(columns = ['id'])
     return df
 
+def remove_duplicate_rows(df):
+    # Remove any rows that are exact duplicates of another row
+    rows_before = len(df)
+    df = df.drop_duplicates()
+    rows_after = len(df)
+
+    if rows_before != rows_after:
+        removed = rows_before - rows_after
+        print(f"Removed {removed} duplicate row(s)")
+
+    return df
+
 if __name__ == "__main__":
     try:
         df = pd.read_csv('raw_applications_data.csv')
-        print(df.duplicated().sum())
+        df = remove_duplicate_rows(df)
 
         df = get_month_and_year(df)
 
